@@ -1,6 +1,6 @@
 # ai-writing
 
-Gemini APIを使用した小説の章草案生成CLIツール。
+Claude Code の `/novel-write` スキルを使った小説章草案生成ツール。
 プロット（Markdown）とキャラクター設定（YAML）を用意するだけで、指定した章の草案を自動生成します。
 複数の作品プロジェクトを1つのリポジトリで管理できます。
 
@@ -11,7 +11,7 @@ Gemini APIを使用した小説の章草案生成CLIツール。
 1. [セットアップ](#セットアップ)
 2. [はじめての実行](#はじめての実行)
 3. [新しいプロジェクトの追加](#新しいプロジェクトの追加)
-4. [CLIリファレンス](#cliリファレンス)
+4. [コマンドリファレンス](#コマンドリファレンス)
 5. [ファイル仕様](#ファイル仕様)
 6. [ディレクトリ構造](#ディレクトリ構造)
 
@@ -19,41 +19,17 @@ Gemini APIを使用した小説の章草案生成CLIツール。
 
 ## セットアップ
 
-### 1. 依存関係のインストール
-
-```bash
-npm install
-```
-
-### 2. APIキーの設定
-
-```bash
-cp .env.example .env
-```
-
-`.env` を開いて以下を編集します。
-
-```
-GEMINI_API_KEY=your_actual_api_key_here
-```
-
-> APIキーは [Google AI Studio](https://aistudio.google.com/) で取得できます（無料枠あり）。
+[Claude Code](https://claude.ai/code) が必要です。インストール済みであればすぐに使えます。
 
 ---
 
 ## はじめての実行
 
 リポジトリには `novel_A` というサンプルプロジェクトが入っています。
-セットアップ後、以下のコマンドですぐに動作確認できます。
+Claude Code で以下のコマンドを実行してください。
 
-```bash
-npm run start
 ```
-
-これは次のコマンドと同等です。
-
-```bash
-node src/index.js --project novel_A --plot chapter1.md --chapter 1
+/novel-write --project novel_A --file chapter1.md --chapter 1
 ```
 
 生成された草案は `projects/novel_A/output/chapter_1.txt` に保存されます。
@@ -65,7 +41,7 @@ node src/index.js --project novel_A --plot chapter1.md --chapter 1
 ### 1. ディレクトリを作成する
 
 ```bash
-mkdir -p projects/my_novel/plots
+mkdir -p projects/my_novel/chapters
 ```
 
 ### 2. キャラクター設定を作成する（`projects/my_novel/characters.yaml`）
@@ -82,7 +58,21 @@ mkdir -p projects/my_novel/plots
   口調: 丁寧語、短い文が多い
 ```
 
-### 3. プロットファイルを作成する（`projects/my_novel/plots/chapter1.md`）
+### 3. 作品全体のプロットを作成する（`projects/my_novel/plot.md`）省略可
+
+```markdown
+# 作品タイトル ― 全体プロット
+
+## あらすじ
+...
+
+## 章構成
+
+### 第1章：...
+...
+```
+
+### 4. 章ファイルを作成する（`projects/my_novel/chapters/chapter1.md`）
 
 ```markdown
 ---
@@ -96,70 +86,63 @@ characters:
 どんな場面か、何が起きるかを書いておくと精度が上がります。
 ```
 
-### 4. 草案を生成する
+### 5. 草案を生成する
 
-```bash
-node src/index.js --project my_novel --plot chapter1.md --chapter 1
+```
+/novel-write --project my_novel --file chapter1.md --chapter 1
 ```
 
 出力先: `projects/my_novel/output/chapter_1.txt`（ディレクトリは自動作成されます）
 
 ---
 
-## CLIリファレンス
+## コマンドリファレンス
 
 ### 構文
 
-```bash
-node src/index.js -P <プロジェクト名> -p <プロットファイル名> -c <章番号> [-m <モデル>]
+```
+/novel-write --project <プロジェクト名> --file <章ファイル名> --chapter <章番号>
 ```
 
 ### オプション
 
-| オプション | 短縮 | 説明 | 必須 |
-|-----------|------|------|------|
-| `--project <name>` | `-P` | プロジェクト名（`projects/` 配下のディレクトリ名） | ✅ |
-| `--plot <filename>` | `-p` | プロットファイル名（`plots/` 配下のファイル名のみ） | ✅ |
-| `--chapter <number>` | `-c` | 生成対象の章番号または名前 | ✅ |
-| `--model <type>` | `-m` | 使用モデル（後述）。省略時は `flash` | |
+| オプション | 説明 | 必須 |
+|-----------|------|------|
+| `--project <name>` | プロジェクト名（`projects/` 配下のディレクトリ名） | ✅ |
+| `--file <filename>` | 章ファイル名（`chapters/` 配下のファイル名のみ） | ✅ |
+| `--chapter <number>` | 生成対象の章番号 | ✅ |
 
-### --model の選択肢
-
-| 値 | モデル | 特徴 |
-|----|--------|------|
-| `flash`（デフォルト） | gemini-2.5-flash | 高速・低コスト。動作確認に最適 |
-| `pro` | gemini-2.5-pro | 高品質・高精度。仕上げに最適 |
-
-### パス解決の規則
-
-コマンド実行時、各ファイルのパスは以下のように自動解決されます。
-
-| 対象 | 解決されるパス |
-|------|--------------|
-| キャラクター設定 | `projects/<project>/characters.yaml` |
-| プロットファイル | `projects/<project>/plots/<filename>` |
-| 出力先 | `projects/<project>/output/chapter_<章番号>.txt` |
+引数を省略した場合、スキルが対話的に質問して補完します。
 
 ### 実行例
 
-```bash
-# 基本的な実行
-node src/index.js -P novel_A -p chapter1.md -c 1
-
-# proモデルで第2章を生成
-node src/index.js -P novel_A -p chapter2.md -c 2 -m pro
-
-# 別プロジェクトで実行
-node src/index.js -P my_novel -p chapter1.md -c 1
 ```
+# 基本的な実行
+/novel-write --project novel_A --file chapter1.md --chapter 1
+
+# 第2章を生成
+/novel-write --project novel_A --file chapter2.md --chapter 2
+
+# 引数なしで実行（対話式で収集）
+/novel-write
+```
+
+### パス解決の規則
+
+| 対象 | 解決されるパス |
+|------|--------------|
+| 全体プロット | `projects/<project>/plot.md` |
+| キャラクター設定 | `projects/<project>/characters.yaml` |
+| 章ファイル | `projects/<project>/chapters/<filename>` |
+| 出力先 | `projects/<project>/output/chapter_<章番号>.txt` |
 
 ---
 
 ## ファイル仕様
 
-### plots/\*.md（プロットファイル）
+### chapters/\*.md（章ファイル）
 
-ファイル冒頭に YAML Front Matter を記述します。`---` で囲まれた部分がメタデータとして解析され、残りがプロット本文としてGeminiに送信されます。
+ファイル冒頭に YAML Front Matter を記述します。`---` で囲まれた部分がメタデータとして解析され、残りが章の指定内容として Claude に送信されます。
 
 ```markdown
 ---
@@ -169,20 +152,20 @@ characters:
   - キャラクター名B
 ---
 
-プロット本文をここに記述します。
+章の指定内容をここに記述します。
 場面の状況・出来事・感情の流れなどを書いておくと
 より精度の高い草案が生成されます。
 ```
 
 | キー | 型 | 説明 |
 |------|----|------|
-| `chapter` | 数値または文字列 | 章の識別子。`--chapter` オプションで上書き可能 |
+| `chapter` | 数値または文字列 | 章の識別子。`--chapter` 引数で上書き可能 |
 | `characters` | 文字列のリスト | この章の登場人物。`characters.yaml` のキーと一致させること |
 
 ### characters.yaml（キャラクター設定ファイル）
 
 キャラクター名をトップレベルのキーとして、属性を自由に定義します。
-`plots/*.md` の Front Matter に列挙された名前のみがプロンプトに組み込まれます。
+章ファイルの Front Matter に列挙された名前のみがプロンプトに組み込まれます。
 
 ```yaml
 太郎:
@@ -204,18 +187,15 @@ characters:
 
 ```
 ai-writing/
-├── src/
-│   ├── index.js          # エントリポイント・CLIオプション定義
-│   ├── gemini.js         # Gemini API呼び出しロジック
-│   └── fileUtils.js      # ファイル読み書き・YAML/Front Matter解析
-├── projects/             # 作品ごとのプロジェクトディレクトリ
-│   └── novel_A/          # サンプルプロジェクト
-│       ├── characters.yaml
-│       ├── plots/
+├── projects/                    # 作品ごとのプロジェクトディレクトリ
+│   └── novel_A/                 # サンプルプロジェクト
+│       ├── plot.md              # 作品全体のプロット（省略可）
+│       ├── characters.yaml      # キャラクター設定（省略可）
+│       ├── chapters/
 │       │   ├── chapter1.md
 │       │   └── chapter2.md
-│       └── output/       # 生成された草案（自動作成）
-├── .env                  # APIキー設定（要作成・Git管理外）
-├── .env.example          # APIキー設定のテンプレート
-└── package.json
+│       └── output/              # 生成された草案（自動作成）
+│           └── chapter_1.txt
+├── CLAUDE.md                    # プロジェクト設定
+└── README.md
 ```
