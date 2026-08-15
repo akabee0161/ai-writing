@@ -53,6 +53,7 @@ characters:
 
 ## スキルの場所
 
-`~/.claude/skills/novel-write/SKILL.md`
+- `.claude/skills/novel-write/SKILL.md` — 既存プロジェクトの章草案を生成する（上記コマンド）
+- `.claude/skills/novel-init/SKILL.md` — 新しいプロジェクトを立ち上げる（`projects/<name>/` の雛形作成）
 
-スキルの動作を変更したい場合（執筆指示・出力フォーマットなど）はこのファイルを編集する。
+どちらもこのリポジトリ内スコープのスキル。スキルの動作を変更したい場合（執筆指示・出力フォーマットなど）は該当ファイルを編集する。
