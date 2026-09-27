@@ -17,7 +17,7 @@ description: Use when starting a brand-new novel project in this ai-writing repo
    ```
 
 2. **`characters.yaml` を作成**（省略可、ただし精度のため強く推奨）
-   登場人物名をトップレベルキーにし、属性は自由記述（`年齢`・`職業`・`性格`・`口調`・`外見` など）。属性名はそのままプロンプトに挿入される。
+   登場人物名をトップレベルキーにし、属性は自由記述（`年齢`・`職業`・`性格`・`口調`・`外見` など）。属性名・内容はそのまま執筆時の設定として使われる。
 
 3. **`plot.md` を作成**（省略可）
    あらすじ・テーマ・章構成を記述。章構成は `### 第N章：タイトル` の形式で書くと後続の章ファイル作成がしやすい。
@@ -29,7 +29,7 @@ description: Use when starting a brand-new novel project in this ai-writing repo
    ```
    /novel-write --project <name> --file chapter1.md --chapter 1
    ```
-   `/novel-write` が現在の環境に見つからない場合、雛形作成（Step 1-4）自体は完了しているので、そこで作業を止めて未実装である旨をユーザーに報告する。代替コマンドを勝手に作らない。
+   `--chapter` は章ファイルの Front Matter に `chapter` があれば省略できる。
 
 6. **出力を確認**
    `projects/<name>/output/chapter_1.txt`（自動生成、`.gitignore` 対象）

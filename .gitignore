@@ -1,3 +1,4 @@
-node_modules/
-.env
+# projects/ はサンプルの novel_A のみ管理対象
+projects/*
+!projects/novel_A/
 projects/*/output/

@@ -5,8 +5,10 @@ Claude Code の skill を使用した小説の章草案生成ツール。
 ## 使い方
 
 ```bash
-/novel-write --project <project-name> --file <chapter-file> --chapter <chapter-number>
+/novel-write --project <project-name> --file <chapter-file> [--chapter <chapter-number>]
 ```
+
+`--chapter` は省略可（章ファイルの Front Matter の `chapter` を使用）。
 
 **例：**
 ```bash
@@ -25,6 +27,8 @@ projects/
     output/
       chapter_<n>.txt    # 生成された章草案
 ```
+
+`projects/` 配下はサンプルの `novel_A` のみ Git 管理対象（`output/` は novel_A も含め管理対象外）。
 
 ## 章ファイルの書き方
 
