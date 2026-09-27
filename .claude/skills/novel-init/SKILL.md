@@ -27,12 +27,12 @@ description: Use when starting a brand-new novel project in this ai-writing repo
 
 5. **草案を生成**
    ```
-   /novel-write --project <name> --file chapter1.md --chapter 1
+   /novel-write --project <name>
    ```
-   `--chapter` は章ファイルの Front Matter に `chapter` があれば省略できる。
+   `--file` を省略すると全章を生成する。1 章だけ生成する場合は `--file chapter1.md` を付ける。
 
 6. **出力を確認**
-   `projects/<name>/output/chapter_1.txt`（自動生成、`.gitignore` 対象）
+   `projects/<name>/output/<YYYYMMDD-HHMMSS>/chapter_1.txt`（実行ごとに日時フォルダが自動作成される。`.gitignore` 対象）
 
 ## Templates
 
@@ -93,4 +93,4 @@ characters:
 | キャラクター設定 | `projects/<name>/characters.yaml` |
 | 全体プロット | `projects/<name>/plot.md` |
 | 章ファイル | `projects/<name>/chapters/<file>.md` |
-| 出力 | `projects/<name>/output/chapter_<n>.txt` |
+| 出力 | `projects/<name>/output/<YYYYMMDD-HHMMSS>/chapter_<n>.txt` |
